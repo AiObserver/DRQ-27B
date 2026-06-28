@@ -1,0 +1,86 @@
+{
+  "model_name": "DRQ-27B TauSynth-GRIPO-Multistage",
+  "model_organization": "SuperQ",
+  "submitting_organization": "SuperQ",
+  "submission_date": "2026-06-28",
+  "submission_type": "custom",
+  "modality": "text",
+  "contact_info": {
+    "email": null,
+    "name": "SuperQ Evaluation Team",
+    "github": null
+  },
+  "is_new": true,
+  "trajectories_available": true,
+  "trajectory_files": {
+    "airline": "drq-27b-tausynth-gripo-multistage_airline_gpt-5.5_4trials.json",
+    "retail": "drq-27b-tausynth-gripo-multistage_retail_gpt-5.5_4trials.json",
+    "telecom": "drq-27b-tausynth-gripo-multistage_telecom_gpt-5.5_4trials.json",
+    "banking_knowledge": "drq-27b-tausynth-gripo-multistage_banking_knowledge_gpt-5.5_4trials.json"
+  },
+  "references": [
+    {
+      "title": "SuperQ drq-27b-tausynth-gripo-multistage evaluation code",
+      "url": "https://github.com/AiObserver/SuperQ",
+      "type": "other"
+    }
+  ],
+  "results": {
+    "airline": {
+      "pass_1": 62.5,
+      "pass_2": 52.99999999999999,
+      "pass_3": 47.5,
+      "pass_4": 44.0,
+      "cost": null
+    },
+    "retail": {
+      "pass_1": 85.52631578947368,
+      "pass_2": 80.11695906432747,
+      "pass_3": 75.87719298245614,
+      "pass_4": 71.9298245614035,
+      "cost": null
+    },
+    "telecom": {
+      "pass_1": 23.68421052631579,
+      "pass_2": 18.128654970760234,
+      "pass_3": 14.473684210526315,
+      "pass_4": 11.403508771929825,
+      "cost": null
+    },
+    "banking_knowledge": {
+      "pass_1": 2.0618556701030926,
+      "pass_2": 1.374570446735395,
+      "pass_3": 1.0309278350515463,
+      "pass_4": 1.0309278350515463,
+      "cost": null,
+      "retrieval_config": "bm25_grep"
+    }
+  },
+  "methodology": {
+    "evaluation_date": "2026-06-27",
+    "tau2_bench_version": "tau2-bench main checkout used for local evaluation; see checklist for local path and result hashes",
+    "user_simulator": "gpt-5.5",
+    "training_methodology": [
+      {
+        "stage": "GRIPO RL",
+        "description": "Agentic reinforcement learning based on tau-style synthetic trajectories and tau-bench-style interaction data, producing the step500 GRIPO posttraining checkpoint used as the main initialization."
+      },
+      {
+        "stage": "GRIPO-MOPD two-stage training",
+        "description": "A second-stage trajectory and tool-use repair phase that applies MOPD-style multi-teacher or multi-checkpoint distillation to reduce seesaw regressions across tau3 domains and consolidate complementary checkpoint behaviors."
+      },
+      {
+        "stage": "GRIPO-SFT OpenAI-format instruction-following training",
+        "description": "Supervised fine-tuning on OpenAI-compatible chat and tool-call format data to improve instruction following, function-call formatting, schema-valid arguments, and local vLLM OpenAI-compatible serving behavior."
+      }
+    ],
+    "notes": "Custom text submission. Agent is the DRQ-27B TauSynth-GRIPO-Multistage model, based on a Qwen3.5-27B model trained through three stages: (1) GRIPO RL on tau-style synthetic trajectories and tau-bench-style interaction data, (2) GRIPO-MOPD second-stage trajectory/tool-use repair and multi-checkpoint distillation to mitigate seesaw regressions, and (3) GRIPO-SFT OpenAI-format instruction-following training for chat/tool-call protocol compliance. The resulting merged model was served through a local vLLM OpenAI-compatible endpoint as model tau27_targeted_sft_merged. User simulator was gpt-5.5 for all four domains. All four tau3 text domains were evaluated on the base split with 4 trials per task and no task filters. banking_knowledge used bm25_grep retrieval, a custom sparse BM25 plus grep/text-search configuration; no dense embedding retriever was used for this run. Reported Pass^k uses C(c,k)/C(n,k) per task, then arithmetic mean over tasks; aggregate avg_4domain in the companion metrics file is the unweighted mean over airline, retail, telecom, and banking_knowledge.",
+    "verification": {
+      "modified_prompts": true,
+      "omitted_questions": false,
+      "details": "Full runs: airline 50x4, retail 114x4, telecom 114x4, banking_knowledge 97x4. No infrastructure_error terminations in the final results. Raw trajectory/results files are not committed here per official leaderboard guidance; checksums and local paths are recorded in trajectory_manifest.json."
+    }
+  },
+  "model_release": null,
+  "reasoning_effort": null
+}
